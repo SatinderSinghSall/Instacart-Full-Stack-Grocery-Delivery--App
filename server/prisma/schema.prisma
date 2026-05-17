@@ -1,0 +1,92 @@
+generator client {
+    provider = "prisma-client"
+    output   = "../generated/prisma"
+}
+
+datasource db {
+    provider = "postgresql"
+}
+
+model User {
+    id        String    @id @default(uuid())
+    name      String
+    email     String    @unique
+    password  String
+    phone     String?   @default("")
+    avatar    String?   @default("")
+    addresses Address[]
+    orders    Order[]
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+}
+
+model Address {
+    id        String   @id @default(uuid())
+    userId    String
+    user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    label     String
+    address   String
+    city      String
+    state     String
+    zip       String
+    isDefault Boolean  @default(false)
+    lat       Float
+    lng       Float
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Product {
+    id            String   @id @default(uuid())
+    name          String
+    description   String?  @default("")
+    price         Float
+    originalPrice Float?   @default(0)
+    image         String
+    category      String
+    unit          String?  @default("piece")
+    stock         Int?     @default(0)
+    isOrganic     Boolean? @default(false)
+    rating        Float?   @default(0)
+    reviewCount   Int?     @default(0)
+    createdAt     DateTime @default(now())
+    updatedAt     DateTime @updatedAt
+}
+
+model Order {
+    id              String @id @default(uuid())
+    userId          String
+    user            User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    items           Json
+    shippingAddress Json
+    paymentMethod   String @default("card")
+    subtotal        Float
+    deliveryFee     Float? @default(0)
+    tax             Float? @default(0)
+    total           Float
+    status          String @default("Placed")
+    statusHistory   Json
+
+    deliveryPartnerId String?
+    deliveryPartner   DeliveryPartner? @relation(fields: [deliveryPartnerId], references: [id], onDelete: SetNull)
+    deliveryOtp       String?          @default("")
+    liveLocation      Json?
+    isPaid            Boolean?         @default(false)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model DeliveryPartner {
+    id          String   @id @default(uuid())
+    name        String
+    email       String   @unique
+    password    String
+    phone       String
+    avatar      String?  @default("")
+    vehicleType String?  @default("bike")
+    isActive    Boolean? @default(true)
+    orders      Order[]
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+}
