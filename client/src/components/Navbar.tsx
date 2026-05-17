@@ -1,6 +1,6 @@
 import {
   ArrowUpRightIcon,
-  Bike,
+  BikeIcon,
   ChevronDownIcon,
   LogOutIcon,
   MapPinIcon,
@@ -8,20 +8,18 @@ import {
   PackageIcon,
   SearchIcon,
   ShieldIcon,
-  ShoppingCart,
+  ShoppingCartIcon,
   UserIcon,
   XIcon,
 } from "lucide-react";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useCart } from "../context/CartContext";
 
-function Navbar() {
-  const user: any = {
-    name: "Satinder Singh Sall",
-    email: "satindersinghsall111@gmail.com",
-    isAdmin: true,
-  };
+import { useCart } from "../context/CartContext";
+import { useAuth } from "../context/AuthContext";
+
+const Navbar = () => {
+  const { user, logout } = useAuth();
   const { cartCount, setIsCartOpen } = useCart();
   const [searchQuery, setSearchQuery] = useState("");
   const [userMenuOpen, setUserMenuOpen] = useState(false);
@@ -36,6 +34,7 @@ function Navbar() {
   };
 
   const handleLogout = () => {
+    logout();
     setUserMenuOpen(false);
     navigate("/");
   };
@@ -43,16 +42,16 @@ function Navbar() {
   return (
     <nav className="bg-white sticky top-0 z-50 border-b border-app-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16 gap-4">
-        {/* Logo: */}
+        {/* Logo */}
         <Link
           to="/"
           className="flex items-center gap-2 text-[22px] font-medium shrink-0"
         >
-          <Bike size={24} /> Satinder Instacart
+          <BikeIcon size={24} /> Instacart
         </Link>
 
         <div className="w-full flex items-center justify-end gap-4 lg:gap-10">
-          {/* Nav Links - Desktop: */}
+          {/* Nav Links - Desktop */}
           <div className="hidden md:flex items-center gap-6 text-sm text-zinc-600">
             <Link to="/">Home</Link>
             <Link to="/products">Products</Link>
@@ -60,11 +59,10 @@ function Navbar() {
               Deals
             </Link>
           </div>
-
-          {/* Search Bar: */}
+          {/* Search */}
           <form
-            className="hidden sm:flex flex-1 max-w-sm text-xs sm:text-sm"
             onSubmit={handleSearch}
+            className="hidden sm:flex flex-1 max-w-sm text-xs sm:text-sm"
           >
             <div className="relative w-full">
               <SearchIcon className="absolute left-2.5 top-1/2 -translate-y-1/2 size-4 text-zinc-500" />
@@ -73,32 +71,31 @@ function Navbar() {
                 placeholder="Search for groceries..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-8 p-2 bg-orange-50 rounded-full ring ring-app-orange/15 focus:outline-none focus:ring-2 focus:ring-app-orange/30"
+                className="w-full pl-8 p-2 bg-orange-50 rounded-full ring ring-app-orange/15 focus:ring-app-orange/30"
               />
             </div>
           </form>
 
-          {/* Right Action: */}
+          {/* Right Actions */}
           <div className="flex items-center gap-3">
-            {/* Cart: */}
+            {/* Cart */}
             <button
-              className="relative p-2 rounded-xl hover:bg-zinc-100 transition-colors"
+              className="relative p-2 rounded-xl"
               onClick={() => setIsCartOpen(true)}
             >
-              <ShoppingCart className="size-5 text-zinc-900" />
+              <ShoppingCartIcon className="size-5 text-zinc-900" />
               {cartCount > 0 && (
                 <span className="absolute -top-1 -right-1 size-4 bg-app-orange text-white text-[10px] rounded-full flex-center">
                   {cartCount}
                 </span>
               )}
             </button>
-
             {/* User */}
             <div className="relative">
               {user ? (
                 <button
                   onClick={() => setUserMenuOpen(!userMenuOpen)}
-                  className="flex items-center gap-2 p-2 rounded-xl hover:bg-zinc-100 transition-colors"
+                  className="flex items-center gap-2 p-2"
                 >
                   <div className="size-7 rounded-full bg-green-950 text-white flex-center">
                     {user.name.charAt(0).toUpperCase()}
@@ -111,9 +108,8 @@ function Navbar() {
                     to="/login"
                     className="hidden md:flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-green-950 rounded-full hover:bg-green-950-light transition-colors"
                   >
-                    <UserIcon size={16} /> Sign-in
+                    <UserIcon size={16} /> Sign In
                   </Link>
-
                   {userMenuOpen ? (
                     <XIcon
                       className="md:hidden"
@@ -200,6 +196,6 @@ function Navbar() {
       </div>
     </nav>
   );
-}
+};
 
 export default Navbar;

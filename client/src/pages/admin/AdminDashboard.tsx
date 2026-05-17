@@ -6,8 +6,10 @@ import {
   ShoppingBagIcon,
   AlertTriangleIcon,
 } from "lucide-react";
+
 import Loading from "../../components/Loading";
-import { dummyAdminDashboardData, statusColors } from "../../assets/assets";
+import { statusColors } from "../../assets/assets";
+import api from "../../config/api";
 
 interface Stats {
   totalOrders: number;
@@ -24,10 +26,11 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setTimeout(() => {
-      setStats(dummyAdminDashboardData);
-      setLoading(false);
-    }, 1000);
+    api
+      .get("/admin/stats")
+      .then((res) => setStats(res.data))
+      .catch(() => {})
+      .finally(() => setLoading(false));
   }, []);
 
   const cards = stats
@@ -113,11 +116,11 @@ export default function AdminDashboard() {
               ) : (
                 stats?.recentOrders.map((order: any) => (
                   <tr
-                    key={order._id}
+                    key={order.id}
                     className="hover:bg-zinc-50/50 transition-colors"
                   >
                     <td className="px-6 py-4 font-mono text-xs text-zinc-500">
-                      #{order._id.slice(-6).toUpperCase()}
+                      #{order.id.slice(-6).toUpperCase()}
                     </td>
                     <td className="px-6 py-4">
                       <p className="font-medium text-zinc-900">
